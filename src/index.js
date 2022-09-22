@@ -12,8 +12,8 @@ searchInput.addEventListener('input', debounce(getCountryData, DEBOUNCE_DELAY));
 
 function getCountryData(event) {
   const countryName = event.target.value.trim();
-  resetMarkup(countryList);
-  resetMarkup(countryInfo);
+  newPage(countryList);
+  newPage(countryInfo);
   if (!countryName) {
     return;
   }
@@ -23,7 +23,8 @@ function getCountryData(event) {
         markupCountry(data[0]);
       }
       if (data.length >= 2 && data.length <= 10) {
-        markupCountries(data);
+        const markup = markUpCountries(data);
+        newPage(countryList,markup)
       } else if (data.length > 10) {
         Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
       }
@@ -38,6 +39,7 @@ function markupCountry(countryData) {
   const { flags, capital, population, name, languages } = countryData;
   const lang = Object.values(languages).join(', ');
 
+  
   const {} = languages;
   return countryInfo.insertAdjacentHTML(
     'beforeend',
@@ -50,17 +52,13 @@ function markupCountry(countryData) {
   );
 }
 
-function markupCountries(countryData) {
-  countryData.map(country => {
-    const { flags, name } = country;
-    return countryList.insertAdjacentHTML(
-      'beforeend',
-      `<div><img src=${flags.svg} width = "30"/>
+function markUpCountries(countryData = []) {
+  return countryData.map(({ flags, name }) => {
+ return `<div><img src=${flags.svg} width = "30"/>
       <span>${name.official}</span></div>`
-    );
-  });
+  }).join('');
 }
 
-function resetMarkup(element) {
-  element.innerHTML = '';
+function newPage (element, markup='') {
+  element.innerHTML = markup;
 }
